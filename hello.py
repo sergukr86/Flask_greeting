@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from markupsafe import escape
 from faker import Faker
 import requests
@@ -17,7 +17,7 @@ def show_req():
     try:
         file = open('requirements.txt', 'r')
         content = file.read()
-        return content.replace(" ","\n")
+        return content.replace(" ", "\n")
     except FileNotFoundError:
         return "File 'requirements.txt' not found", 404
 
@@ -63,7 +63,8 @@ def avg_hw():
             continue
     avg_height_cm = avg_h / count * 2.54
     avg_weight_kg = avg_w / count * 0.453592
-    return str(round(avg_weight_kg))  # str(round(avg_height_cm))  #  str(avg_weight_kg), str(avg_height_cm)
+    return render_template("astronauts.html", weight=round(avg_weight_kg),
+                           height=round(avg_height_cm))
 
 
 @app.route('/space')
@@ -71,13 +72,6 @@ def api_view():
     r = requests.get("http://api.open-notify.org/astros.json")
     astro = r.json()
     return str(astro["number"])
-
-
-# @app.route('/path/<path:subpath>')
-# def show_subpath(subpath):
-#     # show the subpath after /path/
-#     return f'Subpath {escape(subpath)}'
-#
 
 
 if __name__ == "__main__":
